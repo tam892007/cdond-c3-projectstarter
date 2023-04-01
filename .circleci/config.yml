@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@3.1
+
 commands:
   destroy_environment:
     steps:
@@ -136,6 +139,9 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --output text >> ~/project/.circleci/ansible/inventory.txt
+            
+            # temporarily failed
+            exit 1
 
       - persist_to_workspace:
           root: ~/
@@ -152,6 +158,7 @@ jobs:
           fingerprints: ["6c:72:ed:69:7f:47:30:f6:96:23:be:0e:d1:81:54:22"]
       - attach_workspace:
           at: ~/
+      - aws-cli/setup
       - run: cat ~/project/.circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
@@ -171,6 +178,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - aws-cli/setup
       - run:
           name: Run migrations
           command: |
@@ -203,7 +211,7 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
