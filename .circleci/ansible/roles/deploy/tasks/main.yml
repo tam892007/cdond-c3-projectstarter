@@ -1,6 +1,7 @@
 ---
 
 - name: Creates directory
+  become: true
   file:
     path: /web
     state: directory
@@ -12,6 +13,7 @@
     dest: /web
 
 - name: Executing node
+  become: true
   shell: |
     cd web
     pm2 stop default
