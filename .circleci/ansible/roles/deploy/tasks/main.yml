@@ -1,0 +1,17 @@
+---
+
+- name: Creates directory
+  file:
+    path: ~/web
+    state: directory
+
+- name: Extract
+  become: true
+  ansible.builtin.unarchive:
+    src: artifact.tar.gz
+    dest: ~/web
+
+- name: Executing node
+  shell: |
+    pm2 stop default
+    pm2 start npm -- start
