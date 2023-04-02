@@ -300,8 +300,8 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
+            echo "${API_URL}/api/status"
+            if curl --retry 5 --retry-max-time 30 "${API_URL}/api/status" | grep "ok"
             then
               exit 0
             else
