@@ -12,10 +12,16 @@
     src: artifact.tar.gz
     dest: /web 
 
+- name: Create env file
+  become: true
+  copy:
+    src: production.env
+    dest: /web
+    mode: '0777'
+
 - name: Executing node
   become: true
   shell: |
-    cp production.env /web
     cd web
     pm2 stop default
     NODE_ENV=production pm2 start npm -- start
