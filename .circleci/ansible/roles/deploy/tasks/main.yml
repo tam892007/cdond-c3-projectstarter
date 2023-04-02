@@ -13,6 +13,7 @@
     dest: /web
 
 - name: Set Host Environment Variable
+  become: true
   lineinfile:
     dest: /etc/environment
     line: "{{ item }}"
