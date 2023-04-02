@@ -29,7 +29,6 @@
     - "TYPEORM_MIGRATIONS_DIR=\"{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}\""   
 
 - name: Executing node
-  become: true
   shell: |
     source /etc/environment
     cd web
