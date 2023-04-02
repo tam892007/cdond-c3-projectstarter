@@ -12,16 +12,26 @@
     src: artifact.tar.gz
     dest: /web 
 
-- name: Create env file
+- name: Set Host Environment Variable
   become: true
-  copy:
-    src: production.env
-    dest: /web
-    mode: '0777'
+  lineinfile:
+    dest: /etc/environment
+    line: "{{ item }}"
+  loop:
+    - "TYPEORM_CONNECTION=\"{{ lookup('env', 'TYPEORM_CONNECTION')}}\""
+    - "TYPEORM_ENTITIES=\"{{ lookup('env', 'TYPEORM_ENTITIES')}}\""
+    - "TYPEORM_HOST=\"{{ lookup('env', 'TYPEORM_HOST')}}\""
+    - "TYPEORM_PORT=\"{{ lookup('env', 'TYPEORM_PORT')}}\""
+    - "TYPEORM_USERNAME=\"{{ lookup('env', 'TYPEORM_USERNAME')}}\""
+    - "TYPEORM_PASSWORD=\"{{ lookup('env', 'TYPEORM_PASSWORD')}}\""
+    - "TYPEORM_DATABASE=\"{{ lookup('env', 'TYPEORM_DATABASE')}}\""
+    - "TYPEORM_MIGRATIONS=\"{{ lookup('env', 'TYPEORM_MIGRATIONS')}}\""
+    - "TYPEORM_MIGRATIONS_DIR=\"{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}\""   
 
 - name: Executing node
   become: true
   shell: |
+    source /etc/environment
     cd web
     pm2 stop default
-    NODE_ENV=production pm2 start npm -- start
+    pm2 start npm -- start
